@@ -1,0 +1,61 @@
+---
+- hosts: fortigates
+  collections:
+   - fortinet.fortios
+  connection: httpapi
+  vars:
+   vdom: "root"
+   ansible_httpapi_use_ssl: no
+   ansible_httpapi_validate_certs: no
+   ansible_httpapi_port: 80
+   ansible_user: "{{ ansible_user }}"
+   ansible_password: "{{ ansible_password }}"
+  vars_files:
+    - vars_fortinet.yml
+  tasks:
+  - name: Configure hostname fortigate.
+    fortios_system_global:
+      vdom:  "{{ vdom }}"
+      system_global:
+        admintimeout: "23"
+        hostname: "FTG01-EDGE"
+
+  - name: Create  policy ipv4 fortigate.
+    fortios_firewall_policy:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_policy:
+        policyid: 2
+        srcintf:
+          - name: VLAN_10
+        dstintf:
+          - name: VLAN_20
+        srcaddr:
+          - name: VLAN_10_Address
+        dstaddr:
+          - name: VLAN_20_Address
+        action: accept
+        service:
+          - name: ALL
+        name: PolicyAnsible
+        status: enable
+        schedule: always
+        logtraffic: all
+        logtraffic_start: disable
+        comments: "Esta policy fue creada automaticamente por ansible"
+
+  - name: configure syslog server.
+    fortios_log_syslogd_setting:
+      vdom:  "{{ vdom }}"
+      log_syslogd_setting:
+        facility: "kernel"
+        format: "default"
+        interface_select_method: "auto"
+        mode: "udp"
+        port: "514"
+        priority: "default"
+        server: "192.168.1.82"
+        source_ip: "192.168.1.109"
+        ssl_min_proto_version: "default"
+        status: "enable"
+...

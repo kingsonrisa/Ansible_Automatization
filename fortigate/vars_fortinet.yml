@@ -1,0 +1,6 @@
+---
+username: "admin"
+password: "fortinet"
+ansible_user: "admin"
+ansible_password: "fortinet"
+...

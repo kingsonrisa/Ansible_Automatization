@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  vars:
+   host: "192.168.1.109"
+   vdom: "root"
+   ssl_verify: "False"
+  vars_files:
+    - vars_fortinet.yml
+  tasks:
+  - name: Configure VLAN_10
+    fortios_system_interface:
+      host: "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom: "{{ vdom }}"
+      https: "False"
+      ssl_verify: "False"
+      system_interface:
+        state: "present"
+        vdom: "root"
+        interface: "port1"
+        type: "vlan"
+        vlanid: "10"
+        mode: "static"
+        ip: "172.16.10.1 255.255.255.0"
+        allowaccess: ['https', 'ping']
+        name: "VLAN_10"
+
+  - name: Configure VLAN_20
+    fortios_system_interface:
+      host: "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom: "{{ vdom }}"
+      https: "False"
+      ssl_verify: "False"
+      system_interface:
+        state: "present"
+        vdom: "root"
+        interface: "port2"
+        type: "vlan"
+        vlanid: "20"
+        mode: "static"
+        ip: "172.16.20.1 255.255.255.0"
+        allowaccess: ['https', 'ping']
+        name: "VLAN_20"
+
+  - name: Create Firewall address for VLAN_10
+    fortios_firewall_address:
+      host: "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom: "{{ vdom }}"
+      https: "False"
+      ssl_verify: "False"
+      firewall_address:
+        state: "present"
+        type: "ipmask"
+        subnet: "172.16.10.0 255.255.255.0"
+        name: "VLAN_10_Address"
+
+  - name: Create Firewall address for VLAN_20
+    fortios_firewall_address:
+      host: "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom: "{{ vdom }}"
+      https: "False"
+      ssl_verify: "False"
+      firewall_address:
+        state: "present"
+        type: "ipmask"
+        subnet: "172.16.20.0 255.255.255.0"
+        name: "VLAN_20_Address"
+...
